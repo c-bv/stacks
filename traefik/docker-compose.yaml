@@ -5,7 +5,8 @@ services:
         image: traefik:v2.10
         container_name: traefik
         command:
-            #- --log.level=DEBUG
+            - --log.level=DEBUG
+            
             - --api.dashboard=true
 
             - --providers.docker=true
@@ -25,8 +26,13 @@ services:
         env_file:
             - .env
         volumes:
-            - ./letsencrypt:/letsencrypt
+            - ./data/letsencrypt:/letsencrypt
             - /var/run/docker.sock:/var/run/docker.sock:ro
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.charlesbouveret.dev`)
+            - traefik.http.routers.traefik-dashboard.service=api@internal
+            - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
 networks:
     default:
         name: traefik
