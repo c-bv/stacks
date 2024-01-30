@@ -31,3 +31,4 @@
     - Application key
     - Application secret
     - Consumer key
+  - Go to <https://eu.api.ovh.com/console/> to check api status
