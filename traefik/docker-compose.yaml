@@ -18,10 +18,11 @@ services:
             - --entrypoints.web.http.redirections.entryPoint.to=websecure
             - --entrypoints.web.http.redirections.entryPoint.scheme=https
             - --entrypoints.web.http.redirections.entrypoint.permanent=true
+            - --entrypoints.websecure.http.tls.certresolver=myresolver
 
             - --certificatesresolvers.myresolver.acme.dnschallenge=true
             - --certificatesresolvers.myresolver.acme.dnschallenge.provider=ovh
-            # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+            # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory$
             - --certificatesresolvers.myresolver.acme.email=system@c-bv.dev
             - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
         ports:
@@ -29,12 +30,14 @@ services:
             - 443:443
         env_file: .env
         volumes:
-            - ./data/letsencrypt:/letsencrypt
+            - letsencrypt:/letsencrypt
             - /var/run/docker.sock:/var/run/docker.sock:ro
         labels:
             - traefik.enable=true
-            - traefik.http.routers.traefik.rule=Host(`traefik.c-bv.dev`)
-            - traefik.http.routers.traefik.dashboard.service=api@internal
+            - traefik.http.routers.dashboard.rule=Host(`traefik.c-bv.dev`)
+            - traefik.http.routers.dashboard.service=api@internal
+            - traefik.http.routers.dashboard.middlewares=auth
+            - traefik.http.middlewares.auth.basicauth.users=charles:$$2y$$05$$2PfLX6L9pWN2UOLdNBsP/eBPE93d9Tt3xP5JczXPzxlnnR9RmX7.e
 
     whoami:
         image: traefik/whoami
@@ -42,8 +45,12 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
-            - traefik.http.routers.whoami.entrypoints=websecure
-            - traefik.http.routers.whoami.tls.certresolver=myresolver
+            - traefik.http.routers.whoami.middlewares=auth
+            - traefik.http.middlewares.auth.basicauth.users=charles:$$2y$$05$$2PfLX6L9pWN2UOLdNBsP/eBPE93d9Tt3xP5JczXPzxlnnR9RmX7.e
 networks:
     default:
         name: traefik
+
+volumes:
+    letsencrypt:
+        external: true
