@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: CI
 
 on:
     push:
@@ -20,6 +20,8 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   port: ${{ secrets.SSH_PORT }}
                   script: |
+                      pwd
                       cd /opt/$REPO_NAME/traefik
-                      docker-compose down --rmi all
-                      docker-compose up -d
+                      git pull
+                      docker compose down --rmi all
+                      docker compose up -d
