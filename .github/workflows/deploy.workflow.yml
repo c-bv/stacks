@@ -21,7 +21,7 @@ jobs:
                   port: ${{ secrets.SSH_PORT }}
                   script: |
                       pwd
-                      cd /opt/$REPO_NAME/traefik
+                      cd /opt/${{ env.REPO_NAME }}/traefik
                       git pull
                       docker compose down --rmi all
                       docker compose up -d
