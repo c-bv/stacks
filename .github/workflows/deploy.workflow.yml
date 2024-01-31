@@ -21,6 +21,7 @@ jobs:
                   port: ${{ secrets.SSH_PORT }}
                   script: |
                       cd /opt/${{ env.REPO_NAME }}/traefik
+                      echo "${{ secrets.DOTENV }}" > .env
                       git pull
                       docker compose down --rmi all
                       docker compose up -d
