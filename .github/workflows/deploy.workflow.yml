@@ -29,22 +29,23 @@ jobs:
                       echo "Changed directories: $CHANGED_DIRS"
 
                       for DIR in $CHANGED_DIRS
-                        do
-                            echo "Deploying ${DIR}..."
-
-                            ENV_VAR_NAME="ENV_${DIR^^}"
-                            echo "ENV_VAR_NAME: $ENV_VAR_NAME"
-
-                            ENV_FILE="${!ENV_VAR_NAME}"
-                            echo "ENV_FILE: $ENV_FILE"  
-
-                            if [ -z "$ENV_FILE" ]; then
-                              echo "No .env configuration for ${DIR}, skipping..."
-                              continue
-                            fi
-                            
-                            cd $DIR
-                            echo $ENV_FILE | base64 -d > $DIR/.env
-
-                            docker compose up -d --force-recreate
-                        done
+                      do
+                          echo "Deploying ${DIR}..."
+                      
+                          ENV_VAR_NAME="ENV_$(echo $DIR | tr '[:lower:]' '[:upper:]')"
+                          echo "ENV_VAR_NAME: $ENV_VAR_NAME"
+                      
+                          ENV_FILE="${!ENV_VAR_NAME}"
+                          echo "ENV_FILE: $ENV_FILE"  
+                      
+                          if [ -z "$ENV_FILE" ]; then
+                            echo "No .env configuration for ${DIR}, skipping..."
+                            continue
+                          fi
+                          
+                          cd $DIR
+                          echo $ENV_FILE | base64 -d > .env
+                      
+                          docker compose up -d --force-recreate
+                      done
+                      
