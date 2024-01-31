@@ -20,8 +20,8 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   port: ${{ secrets.SSH_PORT }}
                   script: |
-                      cd /opt/${{ env.REPO_NAME }}/traefik
-                      echo "${{ secrets.DOTENV }}" > .env
-                      git pull
-                      docker compose down --rmi all
-                      docker compose up -d
+                    cd /opt/${{ env.REPO_NAME }}
+                    git pull
+
+                    CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | xargs -I {} dirname {} | uniq)
+                    echo "Changed directories: $CHANGED_DIRS"

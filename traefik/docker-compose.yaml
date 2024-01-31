@@ -47,10 +47,11 @@ services:
             - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
             - traefik.http.routers.whoami.middlewares=auth
             - traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH_USER}:${BASIC_AUTH_HASHED_PASSWORD}
-networks:
-    default:
-        name: traefik
 
 volumes:
     letsencrypt:
         external: true
+
+networks:
+    default:
+        name: traefik
