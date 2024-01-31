@@ -7,6 +7,8 @@ on:
 env:
     REGISTRY: ghcr.io
     REPO_NAME: ${{ github.event.repository.name }}
+    ENV_TRAEFIK: ${{ secrets.ENV_TRAEFIK }}
+    ENV_MAILER: ${{ secrets.ENV_MAILER }}
 
 jobs:
     deploy:
@@ -20,8 +22,26 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   port: ${{ secrets.SSH_PORT }}
                   script: |
-                    cd /opt/${{ env.REPO_NAME }}
-                    git pull
+                      cd /opt/${{ env.REPO_NAME }}
+                      git pull
 
-                    CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | xargs -I {} dirname {} | uniq)
-                    echo "Changed directories: $CHANGED_DIRS"
+                      CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | xargs -I {} dirname {} | uniq)
+                      echo "Changed directories: $CHANGED_DIRS"
+
+                      for DIR in $CHANGED_DIRS
+                        do
+                            echo "Deploying ${DIR}..."
+
+                            ENV_VAR_NAME="ENV_${DIR^^}"
+                            ENV_FILE="${!ENV_VAR_NAME}"
+
+                            if [ -z "$ENV_FILE" ]; then
+                              echo "No .env configuration for ${DIR}, skipping..."
+                              continue
+                            fi
+                            
+                            cd $DIR
+                            echo $ENV_FILE | base64 -d > $DIR/.env
+
+                            docker compose up -d --force-recreate
+                        done
