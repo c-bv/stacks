@@ -26,7 +26,7 @@ jobs:
                       CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -v "^\.github/" | xargs -I {} dirname {} | uniq)
                       echo "Changed directories: $CHANGED_DIRS"
 
-                      echo ${{ secrets.DOTENV }} > .env
+                      echo "${{ secrets.DOTENV }}" > .env
 
                       for DIR in $CHANGED_DIRS
                       do
