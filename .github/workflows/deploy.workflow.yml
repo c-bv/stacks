@@ -20,7 +20,6 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   port: ${{ secrets.SSH_PORT }}
                   script: |
-                      pwd
                       cd /opt/${{ env.REPO_NAME }}/traefik
                       git pull
                       docker compose down --rmi all
