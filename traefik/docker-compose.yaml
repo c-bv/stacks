@@ -46,8 +46,7 @@ services:
             - traefik.enable=true
             - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
             - traefik.http.routers.whoami.middlewares=auth
-            - traefik.http.middlewares.auth.basicauth.users=charles:$$2y$$05$$2PfLX6L9pWN2UOLdNBsP/eBPE93d9Tt3xP5JczXPzxlnnR9RmX7.e
-
+            - traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH_USER}:${BASIC_AUTH_HASHED_PASSWORD}
 
 volumes:
     letsencrypt:
