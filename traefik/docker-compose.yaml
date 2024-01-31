@@ -48,6 +48,11 @@ services:
             - traefik.http.routers.whoami.middlewares=auth
             - traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH_USER}:${BASIC_AUTH_HASHED_PASSWORD}
 
+    your_service:
+      image: your_image
+      env_file: 
+        - ../.env
+      command: /bin/sh -c "cat ../.env"
 
 volumes:
     letsencrypt:
