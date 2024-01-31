@@ -7,8 +7,6 @@ on:
 env:
     REGISTRY: ghcr.io
     REPO_NAME: ${{ github.event.repository.name }}
-    ENV_TRAEFIK: ${{ secrets.ENV_TRAEFIK }}
-    ENV_MAILER: ${{ secrets.ENV_MAILER }}
 
 jobs:
     deploy:
@@ -27,27 +25,12 @@ jobs:
 
                       CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -v "^\.github/" | xargs -I {} dirname {} | uniq)
                       echo "Changed directories: $CHANGED_DIRS"
-                      
+
+                      echo ${{ secrets.DOTENV }} > .env
+
                       for DIR in $CHANGED_DIRS
                       do
                           echo "Deploying ${DIR}..."
-                      
-                          ENV_VAR_NAME="ENV_$(echo $DIR | tr '[:lower:]' '[:upper:]')"
-                          echo "ENV_VAR_NAME: $ENV_VAR_NAME"
-                      
-                          # Use eval to get the value of the dynamic variable name
-                          ENV_FILE=$(eval echo "\$$ENV_VAR_NAME")
-                          echo "ENV_FILE: $ENV_FILE"  
-                      
-                          if [ -z "$ENV_FILE" ]; then
-                            echo "No .env configuration for ${DIR}, skipping..."
-                            continue
-                          fi
-                          
                           cd $DIR
-                          echo $ENV_FILE | base64 -d > .env
-                      
                           docker compose up -d --force-recreate
                       done
-                      
-                      
