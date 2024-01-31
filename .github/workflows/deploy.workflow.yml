@@ -25,7 +25,7 @@ jobs:
                       cd /opt/${{ env.REPO_NAME }}
                       git pull
 
-                      CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | xargs -I {} dirname {} | uniq)
+                      CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -v "^\.github/" | xargs -I {} dirname {} | uniq)
                       echo "Changed directories: $CHANGED_DIRS"
 
                       for DIR in $CHANGED_DIRS
@@ -33,7 +33,10 @@ jobs:
                             echo "Deploying ${DIR}..."
 
                             ENV_VAR_NAME="ENV_${DIR^^}"
+                            echo "ENV_VAR_NAME: $ENV_VAR_NAME"
+
                             ENV_FILE="${!ENV_VAR_NAME}"
+                            echo "ENV_FILE: $ENV_FILE"  
 
                             if [ -z "$ENV_FILE" ]; then
                               echo "No .env configuration for ${DIR}, skipping..."
