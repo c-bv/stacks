@@ -37,7 +37,7 @@ services:
             - traefik.http.routers.dashboard.rule=Host(`traefik.c-bv.dev`)
             - traefik.http.routers.dashboard.service=api@internal
             - traefik.http.routers.dashboard.middlewares=auth
-            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$8TrjO78.VrorM5ziaexlOedAvlnzUHiIx6fJjtKYx5TN1WrD1fkR2
+            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$bDjUP6ptjAAeK7gBc/Anfuqy5pMFOt9STunpZke5v1DA2LH2iQ85a
 
     whoami:
         image: traefik/whoami
@@ -46,7 +46,7 @@ services:
             - traefik.enable=true
             - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
             - traefik.http.routers.whoami.middlewares=auth
-            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$8TrjO78.VrorM5ziaexlOedAvlnzUHiIx6fJjtKYx5TN1WrD1fkR2
+            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$bDjUP6ptjAAeK7gBc/Anfuqy5pMFOt9STunpZke5v1DA2LH2iQ85a
 
 volumes:
     letsencrypt:
