@@ -25,6 +25,7 @@ services:
             # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory$
             - --certificatesresolvers.myresolver.acme.email=system@c-bv.dev
             - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+            - /bin/sh -c "cat ../.env"
         ports:
             - 80:80
             - 443:443
@@ -47,12 +48,6 @@ services:
             - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
             - traefik.http.routers.whoami.middlewares=auth
             - traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH_USER}:${BASIC_AUTH_HASHED_PASSWORD}
-
-    your_service:
-      image: your_image
-      env_file: 
-        - ../.env
-      command: /bin/sh -c "cat ../.env"
 
 volumes:
     letsencrypt:
