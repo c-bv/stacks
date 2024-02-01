@@ -11,6 +11,7 @@ services:
             - ENABLE_CLAMAV=1
             - ENABLE_FAIL2BAN=0
             - SPOOF_PROTECTION=0
+            - POSTFIX_MESSAGE_SIZE_LIMIT=31457280 # 30MB 
             - SSL_TYPE=letsencrypt
         volumes:
             - mail-data:/var/mail/
