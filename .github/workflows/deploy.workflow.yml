@@ -31,6 +31,7 @@ jobs:
 
                       echo "${{ secrets.TRAEFIK_DOTENV }}" > $REPO_DIR/traefik/.env
                       echo "${{ secrets.MAILSERVER_DOTENV }}" > $REPO_DIR/mailserver/.env
+                      echo "${{ secrets.VAULTWARDEN_DOTENV }}" > $REPO_DIR/vaultwarden/.env
 
                       CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -v "^\.github/" | xargs -I {} dirname {} | sort -u)
                       echo "Changed directories: $CHANGED_DIRS"
