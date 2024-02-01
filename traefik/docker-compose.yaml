@@ -27,6 +27,11 @@ services:
             # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory$
             - --certificatesresolvers.myresolver.acme.email=system@c-bv.dev
             - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+
+            - --entrypoints.smtp.address=:25
+            - --entryPoints.smtp-ssl.address=:465
+            - --entryPoints.imap-ssl.address=:993
+            - --entryPoints.sieve.address=:4190
         ports:
             - 80:80
             - 443:443
