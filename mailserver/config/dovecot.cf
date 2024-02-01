@@ -1,0 +1,9 @@
+haproxy_trusted_networks = 172.27.0.2, 32
+haproxy_timeout = 3 secs
+service imap-login {
+  inet_listener imaps {
+    haproxy = yes
+    ssl = yes
+    port = 10993
+  }
+}

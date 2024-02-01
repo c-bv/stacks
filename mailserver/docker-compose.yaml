@@ -1,0 +1,64 @@
+version: '3.7'
+services:
+    mailserver:
+        image: ghcr.io/docker-mailserver/docker-mailserver:edge
+        container_name: mailserver
+        restart: always
+        hostname: mail.c-bv.dev
+        environment:
+            - LOG_LEVEL=debug
+            - ENABLE_RSPAMD=1
+            - ENABLE_CLAMAV=1
+            - ENABLE_FAIL2BAN=0
+            - SPOOF_PROTECTION=0
+            - SSL_TYPE=letsencrypt
+        volumes:
+            - mail-data:/var/mail/
+            - mail-state:/var/mail-state/
+            - mail-logs:/var/log/mail/
+            - mail-config:/tmp/docker-mailserver/
+            - ./config/postfix-master.cf:/tmp/docker-mailserver/postfix-master.cf
+            - ./config/postfix-main.cf:/tmp/docker-mailserver/postfix-main.cf
+            - ./config/dovecot.cf:/tmp/docker-mailserver/dovecot.cf
+            - /etc/localtime:/etc/localtime:ro
+            - letsencrypt:/etc/letsencrypt
+        stop_grace_period: 1m
+        healthcheck:
+            test: ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1
+            timeout: 3s
+            retries: 0
+        labels:
+            - traefik.enable=true
+            - traefik.tcp.routers.smtp.rule=HostSNI(`*`)
+            - traefik.tcp.routers.smtp.entrypoints=smtp
+            - traefik.tcp.routers.smtp.service=smtp
+            - traefik.tcp.services.smtp.loadbalancer.server.port=25
+            - traefik.tcp.services.smtp.loadbalancer.proxyProtocol.version=1
+            - traefik.tcp.routers.smtp-ssl.rule=HostSNI(`*`)
+            - traefik.tcp.routers.smtp-ssl.entrypoints=smtp-ssl
+            - traefik.tcp.routers.smtp-ssl.tls.passthrough=true
+            - traefik.tcp.routers.smtp-ssl.service=smtp-ssl
+            - traefik.tcp.services.smtp-ssl.loadbalancer.server.port=465
+            - traefik.tcp.services.smtp-ssl.loadbalancer.proxyProtocol.version=1
+            - traefik.tcp.routers.imap-ssl.rule=HostSNI(`*`)
+            - traefik.tcp.routers.imap-ssl.entrypoints=imap-ssl
+            - traefik.tcp.routers.imap-ssl.service=imap-ssl
+            - traefik.tcp.routers.imap-ssl.tls.passthrough=true
+            - traefik.tcp.services.imap-ssl.loadbalancer.server.port=10993
+            - traefik.tcp.services.imap-ssl.loadbalancer.proxyProtocol.version=2
+            - traefik.tcp.routers.sieve.rule=HostSNI(`*`)
+            - traefik.tcp.routers.sieve.entrypoints=sieve
+            - traefik.tcp.routers.sieve.service=sieve
+            - traefik.tcp.services.sieve.loadbalancer.server.port=4190
+volumes:
+    mail-data:
+    mail-state:
+    mail-logs:
+    mail-config:
+    letsencrypt:
+        external: true
+
+networks:
+    default:
+        name: traefik
+        external: true
