@@ -19,6 +19,8 @@ services:
             - --entrypoints.web.http.redirections.entryPoint.scheme=https
             - --entrypoints.web.http.redirections.entrypoint.permanent=true
             - --entrypoints.websecure.http.tls.certresolver=myresolver
+            - --entrypoints.websecure.http.tls.domains[0].main=c-bv.dev
+            - --entrypoints.websecure.http.tls.domains[0].sans=*.c-bv.dev
 
             - --certificatesresolvers.myresolver.acme.dnschallenge=true
             - --certificatesresolvers.myresolver.acme.dnschallenge.provider=ovh
