@@ -5,14 +5,7 @@ services:
         container_name: mailserver
         restart: always
         hostname: mail.c-bv.dev
-        environment:
-            - LOG_LEVEL=debug
-            - ENABLE_RSPAMD=1
-            - ENABLE_CLAMAV=1
-            - ENABLE_FAIL2BAN=0
-            - SPOOF_PROTECTION=0
-            - POSTFIX_MESSAGE_SIZE_LIMIT=31457280 # 30MB 
-            - SSL_TYPE=letsencrypt
+        env_file: .env
         volumes:
             - mail-data:/var/mail/
             - mail-state:/var/mail-state/
