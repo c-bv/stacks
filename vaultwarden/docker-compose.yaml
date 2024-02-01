@@ -5,13 +5,6 @@ services:
         container_name: vaultwarden
         restart: unless-stopped
         env_file: .env
-        environment:
-            - DOMAIN=https://vault.c-bv.dev
-            - SENDS_ALLOWED=true
-            - EMERGENCY_ACCESS_ALLOWED=true
-            - WEB_VAULT_ENABLED=true
-            - SIGNUPS_ALLOWED=false
-            - SIGNUPS_DOMAINS_WHITELIST=c-bv.dev
         volumes:
             - vault-data:/data/
         labels:

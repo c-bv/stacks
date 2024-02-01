@@ -7,27 +7,26 @@ services:
         restart: unless-stopped
         command:
             - --log.level=DEBUG
-
             - --api.dashboard=true
-
             - --providers.docker=true
             - --providers.docker.exposedbydefault=false
 
+            # WEB
             - --entrypoints.web.address=:80
             - --entrypoints.websecure.address=:443
             - --entrypoints.web.http.redirections.entryPoint.to=websecure
-            - --entrypoints.web.http.redirections.entryPoint.scheme=https
-            - --entrypoints.web.http.redirections.entrypoint.permanent=true
+
+            # CERT
+            - --certificatesresolvers.myresolver.acme.dnschallenge=true
+            - --certificatesresolvers.myresolver.acme.dnschallenge.provider=ovh
+            - --certificatesresolvers.myresolver.acme.email=system@c-bv.dev
+            - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+            # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory$
             - --entrypoints.websecure.http.tls.certresolver=myresolver
             - --entrypoints.websecure.http.tls.domains[0].main=c-bv.dev
             - --entrypoints.websecure.http.tls.domains[0].sans=*.c-bv.dev
-
-            - --certificatesresolvers.myresolver.acme.dnschallenge=true
-            - --certificatesresolvers.myresolver.acme.dnschallenge.provider=ovh
-            # - --certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory$
-            - --certificatesresolvers.myresolver.acme.email=system@c-bv.dev
-            - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
-
+            
+            # SMTP
             - --entrypoints.smtp.address=:25
             - --entryPoints.smtp-ssl.address=:465
             - --entryPoints.imap-ssl.address=:993
