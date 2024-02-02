@@ -1,4 +1,4 @@
-haproxy_trusted_networks = 172.27.0.3, 32
+haproxy_trusted_networks = 172.27.0.0/24
 haproxy_timeout = 3 secs
 service imap-login {
   inet_listener imaps {
