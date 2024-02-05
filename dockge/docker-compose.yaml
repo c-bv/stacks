@@ -11,7 +11,7 @@ services:
             - /opt/stacks:/opt/stacks
         labels:
             - traefik.enable=true
-            - traefik.http.routers.dockge.rule=Host(`dash.c-bv.dev`)
+            - traefik.http.routers.dockge.rule=Host(`${HOST}`)
             - traefik.http.routers.dockge.entrypoints=websecure
             - traefik.http.services.dockge.loadbalancer.server.port=5001
 
