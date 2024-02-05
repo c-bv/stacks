@@ -44,18 +44,9 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         labels:
             - traefik.enable=true
-            - traefik.http.routers.dashboard.rule=Host(`traefik.c-bv.dev`)
+            - traefik.http.routers.dashboard.rule=Host(`${HOST}`)
             - traefik.http.routers.dashboard.service=api@internal
             - traefik.http.routers.dashboard.middlewares=auth
-            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$bDjUP6ptjAAeK7gBc/Anfuqy5pMFOt9STunpZke5v1DA2LH2iQ85a
-
-    whoami:
-        image: traefik/whoami
-        container_name: whoami
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.whoami.rule=Host(`whoami.c-bv.dev`)
-            - traefik.http.routers.whoami.middlewares=auth
             - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$bDjUP6ptjAAeK7gBc/Anfuqy5pMFOt9STunpZke5v1DA2LH2iQ85a
 
 volumes:

@@ -4,7 +4,7 @@ services:
         image: ghcr.io/docker-mailserver/docker-mailserver:edge
         container_name: mailserver
         restart: always
-        hostname: mail.c-bv.dev
+        hostname: ${HOST}
         env_file: .env
         volumes:
             - mail-data:/var/mail/

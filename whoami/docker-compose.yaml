@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+    whoami:
+        image: traefik/whoami
+        container_name: whoami
+        restart: unless-stopped
+        env_file: .env
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.whoami.rule=Host(`${HOST}`)
+            - traefik.http.routers.whoami.middlewares=auth
+            - traefik.http.middlewares.auth.basicauth.users=c-bv:$$2y$$05$$bDjUP6ptjAAeK7gBc/Anfuqy5pMFOt9STunpZke5v1DA2LH2iQ85a
+
+networks:
+    default:
+        name: traefik
