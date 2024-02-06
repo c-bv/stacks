@@ -36,7 +36,7 @@ jobs:
                       echo "${{ secrets.DOCKGE_DOTENV }}" > $REPO_DIR/dockge/.env
                       echo "${{ secrets.UPTIME_KUMA_DOTENV }}" > $REPO_DIR/uptime-kuma/.env
 
-                      CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -v "^\.github/" | xargs -I {} dirname {} | sort -u)
+                      CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -Ev "^(.github|scripts)/" | xargs -I {} dirname {} | sort -u)
                       echo "Changed directories: $CHANGED_DIRS"
 
                       if [ -z "$CHANGED_DIRS" ]; then
