@@ -25,12 +25,16 @@ services:
             - --entrypoints.websecure.http.tls.certresolver=myresolver
             - --entrypoints.websecure.http.tls.domains[0].main=c-bv.dev
             - --entrypoints.websecure.http.tls.domains[0].sans=*.c-bv.dev
-            
+
             # SMTP
             - --entrypoints.smtp.address=:25
             - --entryPoints.smtp-ssl.address=:465
             - --entryPoints.imap-ssl.address=:993
             - --entryPoints.sieve.address=:4190
+
+            # WIREGUARD
+            - --entrypoints.wireguard.address=:51820/udp
+    
         ports:
             - 80:80
             - 443:443
@@ -38,6 +42,7 @@ services:
             - 465:465
             - 993:993
             - 4190:4190
+            - 51820:51820/udp
         env_file: .env
         volumes:
             - letsencrypt:/letsencrypt
