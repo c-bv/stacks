@@ -5,7 +5,6 @@ services:
         image: louislam/uptime-kuma:1
         container_name: uptime-kuma
         restart: always
-        env_file: .env
         volumes:
             - uptime-kuma:/app/data
         labels:
