@@ -6,6 +6,12 @@ DAYS_TO_KEEP=10
 
 echo "🚀 Starting backup of Docker volumes"
 
+# Check if the backup directory exists, and create it if it doesn't
+if [ ! -d "${BACKUP_DIR}" ]; then
+    echo "Creating backup directory ${BACKUP_DIR}"
+    mkdir -p "${BACKUP_DIR}"
+fi
+
 # Loop over each Docker volume
 for VOLUME in $(docker volume ls -q); do
     TIMESTAMP=$(date +%Y%m%d%H%M%S)
@@ -25,7 +31,7 @@ for VOLUME in $(docker volume ls -q); do
     echo "✅ Backup of volume ${VOLUME} completed"
 done
 
-# Remove S3 backups older than 30 days
+# Remove S3 backups older than 10 days
 OLDER_THAN_DATE=$(date -d "-${DAYS_TO_KEEP} days" +%Y%m%d)
 aws s3 ls ${S3_BUCKET}/volumes/ | grep 'tar.gz' | awk '{print $4}' | while read BACKUP; do
     if [ -z "$BACKUP" ]; then
@@ -34,6 +40,7 @@ aws s3 ls ${S3_BUCKET}/volumes/ | grep 'tar.gz' | awk '{print $4}' | while read 
     fi
 
 BACKUP_DATE=$(echo ${BACKUP} | grep -oP "\d{14}")
+        echo "Backup date : ${BACKUP_DATE}"
     if [[ ! -z ${BACKUP_DATE} && ${BACKUP_DATE} -lt ${OLDER_THAN_DATE} ]]; then
         aws s3 rm "${S3_BUCKET}/volumes/${BACKUP}"
         echo "❌ Removed old backup ${BACKUP}"
