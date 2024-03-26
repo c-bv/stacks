@@ -7,6 +7,7 @@ services:
         env_file: .env
         volumes:
             - vault-data:/data/
+            - /var/log/vaultwarden:/data/logs
         labels:
             - traefik.enable=true
             - traefik.http.routers.vaultwarden.rule=Host(`${HOST}`)

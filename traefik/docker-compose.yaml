@@ -7,6 +7,10 @@ services:
         restart: unless-stopped
         command:
             # - --log.level=DEBUG
+            - --accesslog.filepath=/var/log/access.log
+            - --accesslog.format=json
+            - --accessLog.filters.statusCodes=400-499
+            
             - --api.dashboard=true
             - --providers.docker=true
             - --providers.docker.exposedbydefault=false
@@ -47,6 +51,7 @@ services:
         volumes:
             - letsencrypt:/letsencrypt
             - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /var/log/traefik:/var/log
         labels:
             - traefik.enable=true
             - traefik.http.routers.dashboard.rule=Host(`${HOST}`)
