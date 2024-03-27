@@ -14,3 +14,4 @@ services:
       - ./data:/data
       - /var/log/traefik:/var/log/traefik:ro
       - /var/log/vaultwarden:/var/log/vaultwarden:ro
+      - /var/log/mail:/var/log/mail:ro

@@ -11,6 +11,7 @@ services:
             - mail-state:/var/mail-state/
             - mail-logs:/var/log/mail/
             - mail-config:/tmp/docker-mailserver/
+            - /var/log/mail:/var/log/mail
             - ./config/postfix-master.cf:/tmp/docker-mailserver/postfix-master.cf
             - ./config/postfix-main.cf:/tmp/docker-mailserver/postfix-main.cf
             - ./config/dovecot.cf:/tmp/docker-mailserver/dovecot.cf
