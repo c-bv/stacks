@@ -25,6 +25,7 @@ jobs:
             set -e
 
             REPO_DIR="/opt/${{ env.REPO_NAME }}"
+            EXCLUDED_DIRS="${{ secrets.EXCLUDED_DIRS }}"
 
             cd $REPO_DIR
             git pull
@@ -37,12 +38,12 @@ jobs:
             echo "${{ secrets.UPTIME_KUMA_DOTENV }}" > $REPO_DIR/uptime-kuma/.env
             echo "${{ secrets.WIREGUARD_DOTENV }}" > $REPO_DIR/wireguard/.env
 
-            CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -Ev "^(.github|scripts|logs)/" | xargs -I {} dirname {} | sort -u)
+            CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -Ev "^(${EXCLUDED_DIRS})/" | xargs -I {} dirname {} | sort -u)
             echo "Changed directories: $CHANGED_DIRS"
 
             if [ -z "$CHANGED_DIRS" ]; then
-            echo "No changes in deployment-related directories."
-            exit 0
+              echo "No changes in deployment-related directories."
+              exit 0
             fi
 
             for DIR in $CHANGED_DIRS
