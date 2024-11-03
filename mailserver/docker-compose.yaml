@@ -1,6 +1,6 @@
 services:
     mailserver:
-        image: ghcr.io/docker-mailserver/docker-mailserver:edge
+        image: mailserver/docker-mailserver:edge
         container_name: mailserver
         restart: always
         hostname: ${HOST}
