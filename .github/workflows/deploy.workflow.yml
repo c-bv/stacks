@@ -24,6 +24,9 @@ jobs:
           script: |
             set -e
 
+            # Log in to GitHub Container Registry on the remote server
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
             REPO_DIR="/opt/${{ env.REPO_NAME }}"
             EXCLUDED_DIRS="${{ secrets.EXCLUDED_DIRS }}"
 
