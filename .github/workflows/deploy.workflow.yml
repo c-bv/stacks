@@ -37,23 +37,36 @@ jobs:
             echo "${{ secrets.UPTIME_KUMA_DOTENV }}" > $REPO_DIR/uptime-kuma/.env
             echo "${{ secrets.WIREGUARD_DOTENV }}" > $REPO_DIR/wireguard/.env
 
+            # Dynamically list directories in the repository to set DEPLOY_DIRS
+            DEPLOY_DIRS=($(ls -d */ | sed 's#/##' | grep -Ev '^(logs|scripts|.github|other_excluded_dirs)$'))
+
+            echo "Deployment directories: ${DEPLOY_DIRS[@]}"
+
             CHANGED_DIRS=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -Ev "^(.github|scripts|logs)/" | xargs -I {} dirname {} | sort -u)
             echo "Changed directories: $CHANGED_DIRS"
 
-            if [ -z "$CHANGED_DIRS" ]; then
-                echo "No changes in deployment-related directories."
-                exit 0
-            fi
-
-            for DIR in $CHANGED_DIRS
+            for DIR in "${DEPLOY_DIRS[@]}"
             do
                 if [ -d "$REPO_DIR/$DIR" ]; then
-                    echo "Deploying ${DIR}..."
                     cd $REPO_DIR/$DIR
-                    docker compose pull  # Pull the latest images
-                    docker compose up -d --force-recreate
+
+                    # Pull the latest images to check for updates
+                    docker compose pull
+                    UPDATED_IMAGES=$(docker compose images | awk '$2 != "IMAGE" && $3 != $4 {print $1}')
+
+                    if [[ $CHANGED_DIRS == *"$DIR"* ]] || [[ -n "$UPDATED_IMAGES" && $UPDATED_IMAGES == *"$DIR"* ]]; then
+                        echo "Deploying ${DIR} due to code changes or updated image..."
+                        docker compose up -d --force-recreate
+                    else
+                        echo "No changes or new image for ${DIR}, skipping recreation."
+                    fi
+
                     cd $REPO_DIR
                 else
                     echo "Directory ${DIR} does not exist in the repository."
                 fi
             done
+
+            # Remove unused Docker images to free up space
+            echo "Removing old Docker images..."
+            docker image prune -f
