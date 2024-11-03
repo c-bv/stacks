@@ -25,6 +25,7 @@ jobs:
             set -e
 
             REPO_DIR="/opt/${{ env.REPO_NAME }}"
+            EXCLUDED_DIRS="${{ secrets.EXCLUDED_DIRS }}"
 
             cd $REPO_DIR
             git pull
@@ -38,7 +39,7 @@ jobs:
             echo "${{ secrets.WIREGUARD_DOTENV }}" > $REPO_DIR/wireguard/.env
 
             # Dynamically list directories in the repository to set DEPLOY_DIRS
-            DEPLOY_DIRS=($(ls -d */ | sed 's#/##' | grep -Ev '^(logs|scripts|.github|other_excluded_dirs)$'))
+            DEPLOY_DIRS=($(ls -d */ | sed 's#/##' | grep -Ev "^(${EXCLUDED_DIRS})$"))
 
             echo "Deployment directories: ${DEPLOY_DIRS[@]}"
 
