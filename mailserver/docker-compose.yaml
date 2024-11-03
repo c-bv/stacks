@@ -1,4 +1,3 @@
-version: '3.7'
 services:
     mailserver:
         image: ghcr.io/docker-mailserver/docker-mailserver:edge
